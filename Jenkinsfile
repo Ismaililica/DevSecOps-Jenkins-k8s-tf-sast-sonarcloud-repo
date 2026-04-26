@@ -44,8 +44,8 @@ pipeline {
     stage ('Kubernetes Deployment of Buggy Web Application'){
       steps {
          withKubeConfig([credentialsId: 'kubelogin']){
-		   sh('kubectl delete deployment buggy-deployment -n devsecops')
-		   sh('kubectl delete service buggy-service -n devsecops')
+		   sh('kubectl delete deployment buggy-deployment -n devsecops || true')
+		   sh('kubectl delete service buggy-service -n devsecops || true')
 		   sh('kubectl apply -f deployment.yaml --namespace=devsecops')
  
 		 }
