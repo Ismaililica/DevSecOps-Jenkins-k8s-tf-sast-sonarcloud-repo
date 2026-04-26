@@ -62,16 +62,30 @@ pipeline {
 	   }
 
 	}
-    stage ('RunDASTUsingZap'){
-        steps{
-          withKubeConfig([credentialsId: 'kubelogin']) {
-              sh('zap.sh -cmd -quickurl http://$(kubectl get services/buggy-service --namespace=devsecops -o json | jq -r ".status.loadBalancer.ingress[] | .hostname") -quickprogress -quickout ${WORKSPACE}/zap_report.html')
-			  archiveArtifacts artifacts: 'zap_report.html'
-
-		  }
- 
-		}
-
-	}
+    stage('Run DAST Using Zap') {
+    steps {
+        script {
+            // 1. Önce URL'i bir değişkene atayalım
+            def app_url = sh(script: "kubectl get service buggy-service -n devsecops -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
+            
+            echo "Hedef URL: http://${app_url}"
+            
+            // 2. Klasör yetkisini verelim
+            sh 'chmod 777 ${WORKSPACE}'
+            
+            // 3. Değişkeni Docker komutuna paslayalım
+            sh """
+                docker run --rm -v ${WORKSPACE}:/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+                -t http://${app_url} \
+                -r zap_report.html || true
+            """
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'zap_report.html'
+        }
+    }
+}
 }
 }
