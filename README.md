@@ -15,3 +15,14 @@ Security Hotspots: 38 hotspots were flagged for manual review, highlighting sens
 Quality Gate: I've integrated SonarCloud into the Jenkins pipeline to act as a Quality Gate. If the code doesn't meet the security standards, the pipeline automatically fails, preventing insecure code from reaching production.
 
 Shift-Left Security: By catching these 50 security issues during the build phase, we implement the "Shift-Left" approach, reducing the cost and risk of fixing vulnerabilities later.
+
+<img width="1932" height="899" alt="image" src="https://github.com/user-attachments/assets/4b2bf023-98e7-4e9c-a77a-26a89b2b7a03" />
+Container Security with Snyk
+I used Snyk Container Scanning to analyze the Dockerfile. The scan revealed significant vulnerabilities in our base image.
+
+Current Image (openjdk:8-slim): Found 166 vulnerabilities (8 Critical, 30 High).
+
+Snyk Recommendation: Upgrading to openjdk:26-slim reduces the risk to 67 vulnerabilities (only 1 Critical).
+
+Impact: By using Snyk, we can identify insecure base images early in the CI/CD pipeline and shift towards more secure, up-to-date versions automatically.
+
