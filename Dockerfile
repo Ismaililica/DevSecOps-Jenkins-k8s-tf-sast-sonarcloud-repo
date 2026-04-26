@@ -5,7 +5,7 @@ WORKDIR /usr/src/easybuggy/
 RUN mvn -B package
 
 # Hata veren openjdk:8-slim yerine çalışan en yakın muadil
-FROM openjdk:8-jre-slim 
+FROM openjdk:8u212-jre-slim
 WORKDIR /
 
 # Builder'dan jar'ı al
