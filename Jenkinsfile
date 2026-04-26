@@ -18,5 +18,28 @@ pipeline {
 		   }
 	}
   }
+
+	stage('Build'){
+      steps{
+        withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
+            script{
+				app= docker.build("ismaililica")
+
+			}
+		}
+	  }
+	}
+
+	stage ('Push') {
+     steps {
+         script{
+              docker.withRegistry('AWS ECR URL', 'ecr:eu-norh-1:aws-credentials'){
+
+				  app.push("latest")
+			  }
+
+		 }
+	 }
+	}
 }
 }
