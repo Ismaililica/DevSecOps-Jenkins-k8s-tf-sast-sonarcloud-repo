@@ -64,21 +64,24 @@ pipeline {
 	}
     stage('Run DAST Using Zap') {
     steps {
-        script {
-            // 1. Önce URL'i bir değişkene atayalım
-            def app_url = sh(script: "kubectl get service buggy-service -n devsecops -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
-            
-            echo "Hedef URL: http://${app_url}"
-            
-            // 2. Klasör yetkisini verelim
-            sh 'chmod 777 ${WORKSPACE}'
-            
-            // 3. Değişkeni Docker komutuna paslayalım
-            sh """
-                docker run --rm -v ${WORKSPACE}:/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
-                -t http://${app_url} \
-                -r zap_report.html || true
-            """
+        // Burası çok kritik: Jenkins'in EKS cluster'ına bağlanabilmesi için bu blok şart!
+        withKubeConfig([credentialsId: 'kubelogin']) { 
+            script {
+                // 1. Dinamik URL'i cluster içinden çekiyoruz
+                def app_url = sh(script: "kubectl get service buggy-service -n devsecops -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
+                
+                echo "Hedef URL: http://${app_url}"
+                
+                // 2. Klasör yetkisi
+                sh 'chmod 777 ${WORKSPACE}'
+                
+                // 3. Docker ile tarama (Triple quotes kullanarak değişkeni içeri veriyoruz)
+                sh """
+                    docker run --rm -v ${WORKSPACE}:/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+                    -t http://${app_url} \
+                    -r zap_report.html || true
+                """
+            }
         }
     }
     post {
