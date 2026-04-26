@@ -25,7 +25,7 @@ metadata:
   labels:
     app: buggy
     k8s-app: buggy
-   name: buggy-service
+  name: buggy-service
 spec:
   ports:
   - name: http
