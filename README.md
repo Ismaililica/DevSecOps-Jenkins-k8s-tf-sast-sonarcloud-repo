@@ -26,3 +26,16 @@ Snyk Recommendation: Upgrading to openjdk:26-slim reduces the risk to 67 vulnera
 
 Impact: By using Snyk, we can identify insecure base images early in the CI/CD pipeline and shift towards more secure, up-to-date versions automatically.
 
+<img width="1918" height="868" alt="image" src="https://github.com/user-attachments/assets/c75642e3-49b0-4d6b-9378-8e460f60601c" />
+fter successful deployment to AWS EKS, an automated DAST scan was performed using OWASP ZAP. The scan results provide a comprehensive security overview of the live application.
+
+📈 Key Findings:
+Alert Summary: Found 3 Medium and 9 Low risk vulnerabilities. This confirms that the application is functional but has security gaps that need to be addressed (perfect for a DevSecOps demo).
+
+Network Health: 37% of responses returned 200 OK, while 44% resulted in 5xx Internal Server Errors, indicating that our DAST tool successfully stressed the application's error-handling mechanisms.
+
+Scan Depth: Total of 50 endpoints were discovered and tested, covering 88% of HTML content and 98% of GET methods.
+
+
+
+
